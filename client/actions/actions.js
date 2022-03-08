@@ -5,7 +5,7 @@ export const fetchUserMovieList = (username) => {
     console.log('at fetch movie action');
     dispatch(fetchUserMovieListStarted());
     console.log('dispatched fetch start action');
-    fetch(`http://localhost:3000/${username}`)
+    fetch(`/${username}`)
       .then((data) => {
         console.log('fetch data: ', data);
         return data.json();

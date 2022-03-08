@@ -42,5 +42,6 @@ module.exports = {
         port: 8888,
         compress: true,
         hot: true,
+        proxy: {'/': 'http://localhost:3000'}
      },
 };
