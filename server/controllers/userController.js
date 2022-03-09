@@ -83,7 +83,7 @@ const userController = {
       // console.log(result);
       const user = result[0];
       // console.log(user);
-      const validPassword = user.comparePassword(req.body.password);
+      const validPassword = await user.comparePassword(req.body.password);
       if (validPassword) console.log('valid password!');
       else console.log('password declined');
       res.locals.user = result[0];

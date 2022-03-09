@@ -37,7 +37,7 @@ userSchema.pre('save', function mongoosePreSaveMiddleware(next) {
 
 // When a user logs in: hash the password they logged in with, before comparing it to the password stored in the database.
 userSchema.methods.comparePassword = function comparePassword(plaintext) {
-  return bcrypt.compareSync(plaintext, this.password);
+  return bcrypt.compare(plaintext, this.password);
 };
 
 const User = mongoose.model('user', userSchema);
