@@ -80,6 +80,20 @@ const userController = {
   async getUser(req, res, next) {
     try {
       const result = await User.find({ username: req.params.username });
+      res.locals.user = result[0];
+      return next();
+    } catch (err) {
+      return next({
+        log: `getUser controller had an error. ${err}`,
+        status: 401,
+        message: { err: 'An error occurred when finding a user' },
+      });
+    }
+  },
+
+  async verifyUser(req, res, next) {
+    try {
+      const result = await User.find({ username: req.params.username });
       // console.log(result);
       const user = result[0];
       // console.log(user);
@@ -90,9 +104,9 @@ const userController = {
       return next();
     } catch (err) {
       return next({
-        log: `getUser controller had an error. ${err}`,
+        log: `verifyUser controller had an error. ${err}`,
         status: 401,
-        message: { err: 'An error occurred when finding a user' },
+        message: { err: 'An error occurred when verifying a user' },
       });
     }
   },
