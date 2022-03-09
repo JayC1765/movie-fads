@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import * as privateVars from '../constants/private.js';
+import apiKey from '../constants/private';
 
-const Poster = (props) => {
+function Poster(props) {
   let [BaseImageURL, setBaseImageURL] = useState('');
   let [PosterPath, setPosterPath] = useState('');
   let [OriginalTitle, setOriginalTitle] = useState(null);
@@ -15,7 +15,7 @@ const Poster = (props) => {
     let configUrl = ''.concat(
       BaseURL,
       'configuration?api_key=',
-      privateVars.apiKey
+      apiKey,
     );
     fetch(configUrl)
       .then((result) => result.json())
@@ -51,5 +51,5 @@ const Poster = (props) => {
       <h3>{OriginalTitle}</h3>
     </div>
   );
-};
+}
 export default Poster;

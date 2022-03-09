@@ -1,13 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import CardContainer from './CardContainer.jsx';
+import CardContainer from './CardContainer';
 
 const mapStateToProps = (state) => ({
   movieList: state.lists.userMovieArray,
 });
 
-const BodyContainer = (props) => {
-  console.log('rendering body container', props.movieList);
+function BodyContainer(props) {
   return (
     <div className="body-container">
       <input className="search-bar" placeholder="Search..." autoFocus></input>

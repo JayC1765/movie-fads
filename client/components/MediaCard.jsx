@@ -1,8 +1,8 @@
 import React from 'react';
-import Poster from './Poster.jsx';
-import Buttons from './Buttons.jsx';
+import Poster from './Poster';
+import Buttons from './Buttons';
 
-const MediaCard = (props) => {
+function MediaCard(props) {
   return (
     <div className="media-card">
       <div
