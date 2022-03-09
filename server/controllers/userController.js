@@ -76,11 +76,16 @@ const userController = {
   //       message: { err: 'An error occurred when creating a new user' },
   //     });
   //   }
-  // },
-
+  // }
   async getUser(req, res, next) {
     try {
       const result = await User.find({ username: req.params.username });
+      // console.log(result);
+      const user = result[0];
+      // console.log(user);
+      const validPassword = user.comparePassword(req.body.password);
+      if (validPassword) console.log('valid password!');
+      else console.log('password declined');
       res.locals.user = result[0];
       return next();
     } catch (err) {
