@@ -7,10 +7,28 @@ function App() {
 
   // useEffect(() => setLogin(true));
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log('clicked submit button');
 
+  const handleSubmit = (event) => {
+    const username = document.querySelector('#username').value;
+    const password = document.querySelector('#password').value;
+    event.preventDefault();
+  
+    let method;
+    if (page === 'sign up') method = 'POST';
+
+    fetch('/user', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password }),
+    })
+      .then((result) => result.json())
+      .then((response) => {
+        if (response.result === 'success') {
+          setPage('homepage');
+        } else {
+          setPage('log in');
+        }
+      });
   }
 
   let content;

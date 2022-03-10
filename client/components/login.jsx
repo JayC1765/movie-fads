@@ -5,10 +5,11 @@ function Login(props) {
 
   return (
     <div>
-      <form method={formMethod} action={formAction}>
+      <form method={formMethod} action={formAction}> 
+      {/* DON'T NEED forMethod and formAction anymore */}
         <label htmlFor="username">
           Username:
-          <input id="username" type="text" name="username" required placeholder="Placeholder" />
+          <input id="username" type="text" name="username" required placeholder="Please enter username..." />
         </label>
         <label htmlFor="password">
           Password:
