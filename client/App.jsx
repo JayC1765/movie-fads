@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import fetchUserMovieList from './actions/actions';
 import Login from './components/Login';
 import MainContainer from './containers/MainContainer';
 
 function App() {
-  const [page, setPage] = useState('sign up');
+  const [page, setPage] = useState('log in');
+
+  const dispatch = useDispatch();
 
   // useEffect(() => setLogin(true));
 
@@ -47,13 +51,16 @@ function App() {
         } else {
           setPage('log in');
         }
-      });
+        return response.user;
+      })
+      .then((user) => dispatch(fetchUserMovieList(user)))
+      .catch((err) => console.log(err));
   };
 
   const toggleForm = (event) => {
     if (page === 'sign up') setPage('log in');
     else setPage('sign up');
-  }
+  };
 
   let content;
   if (page === 'sign up') {

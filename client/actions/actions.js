@@ -10,41 +10,40 @@ const fetchUserMovieListFailure = (error) => ({
   payload: error,
 });
 
-const fetchUserMovieList = (username) => (dispatch) => {
-  fetch(`/${username}`)
-    .then((data) => data.json())
-    .then((userObj) => (
-      apiHandler.configureApi()
-        .then((configObj) => {
-          const result = [];
-          for (let i = 0; i < userObj.arrMediaObj.length; i += 1) {
-            result.push(
-              new Promise((resolve, reject) => {
-                apiHandler.locatePoster(userObj.arrMediaObj[i].TMDBid, configObj)
-                  .then((obj) => {
-                    const joinData = {
-                      poster_path: obj.poster_path,
-                      original_title: obj.original_title,
-                      ...userObj.arrMediaObj[i],
-                    };
-                    resolve(joinData);
-                  })
-                  .catch((e) => {
-                    reject(e);
-                  });
-              }),
-            );
-          }
-          return Promise.allSettled(result);
-        })
-        .catch((e) => e)
-    ))
-    .then((res) => dispatch(fetchUserMovieListSuccess(res.map((ele) => ele.value))))
+const fetchUserMovieList = (userObj) => (dispatch) => {
+  apiHandler.configureApi()
+    .then((configObj) => {
+      const result = [];
+      for (let i = 0; i < userObj.arrMediaObj.length; i += 1) {
+        result.push(
+          new Promise((resolve, reject) => {
+            apiHandler.locatePoster(userObj.arrMediaObj[i].TMDBid, configObj)
+              .then((obj) => {
+                const joinData = {
+                  poster_path: obj.poster_path,
+                  original_title: obj.original_title,
+                  ...userObj.arrMediaObj[i],
+                };
+                resolve(joinData);
+              })
+              .catch((e) => {
+                reject(e);
+              });
+          }),
+        );
+      }
+      return Promise.allSettled(result);
+    })
+    .then((res) => {
+      const movieList = (res.map((ele) => ele.value));
+      movieList.push(userObj.username);
+      dispatch(fetchUserMovieListSuccess(movieList));
+    })
     .catch((err) => {
       if (!sessionStorage.getItem('refreshed')) {
         localStorage.clear();
         sessionStorage.setItem('refreshed', 'true');
-        return fetchUserMovieList(username);
+        return fetchUserMovieList(userObj);
       }
       return dispatch(fetchUserMovieListFailure(err));
     });
