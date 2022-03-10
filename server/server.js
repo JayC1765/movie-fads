@@ -31,14 +31,12 @@ app.delete('/:username', userController.deleteUser, (req, res) => {
 
 //add PUT Media endpoint to update user's media list array
 app.put('/addMedia', userController.addMedia, (req, res) => {
-  return res.status(200).json(res.locals.addedMedia);
+  return res.status(200).json(res.locals.addedMedia)
 });
 
 app.put('/updateMedia', userController.updateMedia, (req, res) => {
-  return res.status(200);
+  return res.status(200).json(res.locals.updatedMedia)
 });
-
-// app.use('/updateMedia', mediaRouter);
 
 // Unknown route handler
 app.get('*', (req, res) => res.status(404).send('Page not Found'));
