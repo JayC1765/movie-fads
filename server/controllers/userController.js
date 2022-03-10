@@ -131,9 +131,9 @@ const userController = {
     // make sure how front end is sending the TMDBid as number or string (CURRENTLY a string)
     const template = {
       TMDBid: req.body.TMDBid,
-      haveSeen: true,
+      haveSeen: false,
       toWatch: true,
-      fav: true,
+      fav: false,
     };
 
     checkDuplicate(username, template)
