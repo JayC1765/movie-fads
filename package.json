@@ -2,7 +2,7 @@
   "name": "movie-fads",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.jsx",
   "scripts": {
     "start": "nodemon server/server.js",
     "build": "NODE_ENV=production webpack",
@@ -29,7 +29,7 @@
     "mongoose": "^6.2.4",
     "node-fetch": "^3.2.0",
     "node-sass": "^6.0.1",
-    "prop-types": "^15.6.2",
+    "prop-types": "^15.8.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-icons": "^4.3.1",

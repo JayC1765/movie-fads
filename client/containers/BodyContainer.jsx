@@ -1,31 +1,29 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import CardContainer from './CardContainer.jsx';
+import { useSelector } from 'react-redux';
+import CardContainer from './CardContainer';
 
-const mapStateToProps = (state) => ({
-  movieList: state.lists.userMovieArray,
-});
-
-const BodyContainer = (props) => {
-  console.log('rendering body container', props.movieList);
+function BodyContainer() {
+  const movieList = useSelector((state) => {
+    return state.lists.userMovieArray;
+  });
   return (
     <div className="body-container">
-      <input className="search-bar" placeholder="Search..." autoFocus></input>
+      <input className="search-bar" placeholder="Search..." autoFocus />
 
       <h1>Watchlist</h1>
       <CardContainer
-        movieList={props.movieList.filter((movie) => movie.toWatch === true)}
+        movieList={movieList.filter((movie) => movie && movie.toWatch === true)}
       />
       <h1>Favorites</h1>
       <CardContainer
-        movieList={props.movieList.filter((movie) => movie.fav === true)}
+        movieList={movieList.filter((movie) => movie && movie.fav === true)}
       />
       <h1>Recently Watched</h1>
       <CardContainer
-        movieList={props.movieList.filter((movie) => movie.haveSeen === true)}
+        movieList={movieList.filter((movie) => movie && movie.haveSeen === true)}
       />
     </div>
   );
-};
+}
 
-export default connect(mapStateToProps, null)(BodyContainer);
+export default BodyContainer;

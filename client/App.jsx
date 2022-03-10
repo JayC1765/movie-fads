@@ -1,12 +1,12 @@
 import React from 'react';
-import MainContainer from './containers/MainContainer.jsx';
+import MainContainer from './containers/MainContainer';
 
-const App = () => {
-  return(
-   <div id = 'app'> 
-    <MainContainer />
-   </div>
+function App() {
+  return (
+    <div id="app">
+      <MainContainer />
+    </div>
   );
-};
+}
 
 export default App;
