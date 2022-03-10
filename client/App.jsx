@@ -5,18 +5,22 @@ import MainContainer from './containers/MainContainer';
 function App() {
   const [page, setPage] = useState('sign up');
 
-  console.log('login', page);
-
   // useEffect(() => setLogin(true));
 
-  let content;
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log('clicked submit button');
 
+  }
+
+  let content;
   if (page === 'sign up') {
     content = (
       <Login
         buttonText="Sign Up"
         formMethod="post"
         formAction="user"
+        handleSubmit={handleSubmit}
       />
     );
   } else if (page === 'log in') {
@@ -25,13 +29,12 @@ function App() {
         buttonText="Log In"
         formMethod="get"
         formAction="some-route"
+        handleSubmit={handleSubmit}
       />
     );
   } else if (page === 'homepage') {
     content = <MainContainer />;
   }
-
-  console.log('content', content);
 
   return (
     <div id="app">
