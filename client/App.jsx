@@ -95,7 +95,9 @@ function App() {
 
   return (
     <div id="app">
+      <h1 id="title">Movie Fads</h1>
       {content}
+      <h1 id="ghost-title">Movie Fads</h1>
     </div>
   );
 }

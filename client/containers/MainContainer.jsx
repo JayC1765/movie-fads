@@ -5,7 +5,7 @@ function MainContainer() {
   return (
     //! HeadContainer component goes here
     <div className="main-container">
-      <h1>Movie Fads</h1>
+      {/* <h1>Movie Fads</h1> */}
       <BodyContainer />
     </div>
     //! FooterContainer component goes here
