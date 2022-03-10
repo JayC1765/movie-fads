@@ -1,6 +1,7 @@
 // const { template } = require('@babel/core');
 const User = require('../model/userModel.js');
 
+// Helper function for creating new users
 const checkDuplicate = (username, template) => (
   new Promise((resolve, reject) => {
     User.findOne({ username: username }, { arrMediaObj: 1 })
@@ -21,27 +22,38 @@ const checkDuplicate = (username, template) => (
   })
 );
 
-  // User.find({ username })
-  //   .then((data) => {
-  //     // console.log(data);
-  //     res.locals.checkDup = data;
-  //     return next();
-  //   })
-  //   .catch((err) => next({
-  //     log: 'An error has occured with the checking duplicate middleware',
-  //     status: 401,
-  //     message: { err: `${err} An error has occured with the checking duplicate middleware` },
-  //   }));
+// Helper function for updating status of the current movie for the individual user
+const updateStatus = (username, TMDBid, status) => (
+  new Promise((resolve, reject) => {
+    User.findOne({ username: username }, { arrMediaObj: 1 })
+      .then((data) => {
+        const arrMediaObj = data.arrMediaObj;
+        const type = status[0];
+        const currStatus = status[1];
+
+        for (let i = 0; i < arrMediaObj.length; i += 1) {
+          if (arrMediaObj[i].TMDBid === TMDBid) {
+            const updatedMediaArr = arrMediaObj[i];
+            updatedMediaArr[type] = !currStatus;
+            resolve(updatedMediaArr);
+          }
+        }
+      })
+      .catch((err) => reject(err));
+  })
+);
+
 
 const userController = {
-
+  // req body should be the following { username: "David", password: "hashedPassword"}
   createUser(req, res, next) {
     User.find({ username: req.body.username })
       .then((data) => {
         if (!data[0]) {
           User.create({ username: req.body.username, password: req.body.password })
             .then((data) => {
-              res.locals.createUser = 'username has been successfully created';
+              console.log('username has been successfully created');
+              res.locals.createUser = data;
               return next();
             })
             .catch((err) => next({
@@ -61,23 +73,7 @@ const userController = {
       }));
   },
 
-  // async createUser(req, res, next) {
-  //   try {
-  //     // declare a const to check if username already exist
-  //       const result = await User.create({ username: req.body.username });
-  //       console.log(result);
-  //       res.locals.createUser = result;
-  //       return next();
-  //     // }
-  //   } catch (err) {
-  //     return next({
-  //       log: `createUser controller had an error. ${err}`,
-  //       status: 401,
-  //       message: { err: 'An error occurred when creating a new user' },
-  //     });
-  //   }
-  // },
-
+  // returns the whole object for the user found in the DB
   async getUser(req, res, next) {
     try {
       const result = await User.find({ username: req.params.username });
@@ -109,23 +105,12 @@ const userController = {
     }
   },
 
-  // addMedia - Add an object to User's .arrMediaObj | PUT .findOneAndUpdate()
-  /*
-  {
-    TMDBId: 12
-    haveSeen: false
-    toWatch: true
-    fav: true
-  }
-    */
+  // req body should probably be {username: "David", TMDBid: 70}
   addMedia(req, res, next) {
-    // req body should probably be {username: "David", TMDBid: 70}
     const username = req.body.username;
-    // const username = 'Jason';
-    // make sure how front end is sending the TMDBid as number or string
+    // make sure how front end is sending the TMDBid as number or string (CURRENTLY a string)
     const template = {
       TMDBid: req.body.TMDBid,
-      // TMDBid: '218',
       haveSeen: false,
       toWatch: false,
       fav: true,
@@ -137,6 +122,7 @@ const userController = {
           User.updateOne({ username: username }, { $set: { arrMediaObj: data } })
             .then(() => console.log('Movie has been added'))
             .catch((err) => next(err));
+          res.locals.addedMedia = data;
           return next();
         }
         return next({
@@ -154,109 +140,28 @@ const userController = {
       });
   },
 
-  // async addMedia(req, res, next) {
-  //   // req.body is { TMDBid: 70, fav: true }
-
-  //   // req.body should actually probably be {username: "David", TMBid: 70, fav}
-  //   try {
-  //     const template = {
-        // TMDBid: req.body.TMDBid,
-        // haveSeen: false,
-        // toWatch: false,
-        // fav: false,
-  //     };
-  //     // not sure if this is actually necessary
-  //     template[Object.keys(req.body)[1]] = true;
-
-  //     const result = await User.updateOne(
-  //       { username: req.params.username },
-  //       { $push: { arrMediaObj: template } },
-  //     );
-  //     res.locals.addedMedia = result;
-  //     return next();
-  //   } catch (err) {
-  //     next({
-  //       log: `addMedia controller had an error. ${err}`,
-  //       status: 401,
-  //       message: { err: 'An error occurred when adding media object' },
-  //     });
-  //   }
-  // },
-
-  // addFavs(req, res, next) {
-  //   // req body should be { username: 'David', TMDBid: '218', fav||watchlist||watch: false}
-  //   return next();
-  // },
-
-  // addWatchList(req, res, next) {
-  //   // req body should be { username: 'David', TMDBid: '218', fav||watchlist||watch: false}
-  //   return next();
-  // },
-
-  // addWatched(req, res, next) {
-  //   // req body should be { username: 'David', TMDBid: '218', fav||watchlist||watch: false}
-  //   return next();
-  // },
-
+  // req body should be { username: 'David', TMDBid: '218', fav||watchlist||watch: current status}
+  // status should be an array [fav, true] || [haveSeen, true] || [toWatch, true]
   updateMedia(req, res, next) {
-    // req body should be { username: 'David', TMDBid: '218', fav||watchlist||watch: current status}
-    // status should be an array [fav, true] || [haveSeen, true] || [toWatch, true]
-    const status = req.body.status;
     const username = req.body.username;
     const TMDBid = req.body.TMDBid;
+    const status = req.body.status;
 
-    console.log(status);
-    console.log(username);
-    console.log(TMDBid);
-
-    // updateStatus(username, TMDbid, status)
-    return next();
+    updateStatus(username, TMDBid, status)
+      .then((data) => {
+        console.log(data)
+        User.updateOne( {username: username}, { $set: {arrMediaObj: data} })
+          .then(() => console.log('Media status has been updated'))
+          .catch((err) => console.log(err));
+        res.locals.updatedMedia = data;
+        return next();
+      })
+      .catch((err) => next({
+        log: 'An error has occured with the update Media middleware',
+        status: 401,
+        message: { err: `${err} An error has occured with the update Media middleware` },
+      }));
   },
-
-  // UPDATE MEDIA (PUT)
-  // async updateMedia(req, res, next) {
-  //   // { TMDBid: 70, fav: true }
-  //   try {
-  //     let result;
-
-  //     if (req.body.hasOwnProperty('fav')) {
-  //       result = await User.updateOne(
-  //         {
-  //           username: req.params.username,
-  //           arrMediaObj: { $elemMatch: { TMDBid: { $eq: req.body.TMDBid } } },
-  //         },
-
-  //         { $set: { 'arrMediaObj.$.fav': req.body.fav } },
-  //       );
-  //     } else if (req.body.hasOwnProperty('toWatch')) {
-  //       result = await User.updateOne(
-  //         {
-  //           username: req.params.username,
-  //           arrMediaObj: { $elemMatch: { TMDBid: { $eq: req.body.TMDBid } } },
-  //         },
-
-  //         { $set: { 'arrMediaObj.$.toWatch': req.body.toWatch } },
-  //       );
-  //     } else if (req.body.hasOwnProperty('haveSeen')) {
-  //       result = await User.updateOne(
-  //         {
-  //           username: req.params.username,
-  //           arrMediaObj: { $elemMatch: { TMDBid: { $eq: req.body.TMDBid } } },
-  //         },
-
-  //         { $set: { 'arrMediaObj.$.haveSeen': req.body.haveSeen } },
-  //       );
-  //     }
-  //     res.locals.updatedMedia = result;
-  //     return next();
-  //   } catch (err) {
-  //     next({
-  //       log: `updateMedia controller had an error. ${err}`,
-  //       status: 401,
-  //       message: { err: 'An error occurred when updating media' },
-  //     });
-  //   }
-  // },
 
 };
 
