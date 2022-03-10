@@ -8,17 +8,15 @@ function MediaCard(props) {
       <div
         className="poster"
         onClick={() =>
-          window.open(`https://www.themoviedb.org/movie/${props.tmdbId}`)
-        }
-        className="mediaCard"
+          window.open(`https://www.themoviedb.org/movie/${props.tmdbId}`)}
       >
-        <Poster key={`poster ${props.key}`} tmdbId={props.tmdbId} />
+        <Poster posterPath={props.posterPath} originalTitle={props.originalTitle} key={`poster ${props.key}`} tmdbId={props.tmdbId} />
       </div>
       <div className="buttons">
         <Buttons />
       </div>
     </div>
   );
-};
+}
 
 export default MediaCard;

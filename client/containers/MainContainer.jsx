@@ -1,18 +1,15 @@
 import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import BodyContainer from './BodyContainer';
 import fetchUserMovieList from '../actions/actions';
 
-const mapDispatchToProps = (dispatch) => ({
-  loadMovies: (username) => dispatch(fetchUserMovieList(username)),
-});
-
-function MainContainer(props) {
+function MainContainer() {
+  const dispatch = useDispatch();
   useEffect(() => {
     console.log('inside MainContainer useEffect');
     //! no need to hard code argument for loadMovies once username has been saved in state
     //! follwoing authentication stage (to be implemented)
-    return props.loadMovies('David');
+    return dispatch(fetchUserMovieList('David'));
   });
   return (
     //! HeadContainer component goes here
@@ -24,4 +21,4 @@ function MainContainer(props) {
   );
 }
 
-export default connect(null, mapDispatchToProps)(MainContainer);
+export default MainContainer;

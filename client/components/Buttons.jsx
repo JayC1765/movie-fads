@@ -1,30 +1,40 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 //! Buttons need on click functions
 //! Functions will dispatch actoins, through mapDispatchToProps
-const Buttons = (props) => {
+function Buttons(props) {
+  const { button1, button2, button3 } = props;
   const buttons = [];
-  if (props.button1)
+  if (button1) {
     buttons.push(
       <button type="button" onClick={console.log('')}>
-        {props.button1}
-      </button>
+        {button1}
+      </button>,
     );
-  if (props.button2)
-    buttons.push(
-      <button type="button" onClick={console.log('')}>
-        {' '}
-        {props.button2}
-      </button>
-    );
-  if (props.button3)
+  }
+  if (button2) {
     buttons.push(
       <button type="button" onClick={console.log('')}>
         {' '}
-        {props.button3}
-      </button>
+        {button2}
+      </button>,
     );
-
+  }
+  if (button3) {
+    buttons.push(
+      <button type="button" onClick={console.log('')}>
+        {' '}
+        {button3}
+      </button>,
+    );
+  }
   return <div className="buttons">{buttons}</div>;
+}
+
+Buttons.propTypes = {
+  button1: PropTypes.string,
+  button2: PropTypes.string,
+  button3: PropTypes.string,
 };
 
 Buttons.defaultProps = {
