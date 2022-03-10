@@ -1,25 +1,83 @@
-const UserDb = require('../model/mediaModel.js');
+// const { template } = require('@babel/core');
+const User = require('../model/userModel.js');
+
+// Helper function for creating new users
+const checkDuplicate = (username, template) => (
+  new Promise((resolve, reject) => {
+    User.findOne({ username: username }, { arrMediaObj: 1 })
+      .then((data) => {
+        const arrMediaObj = data.arrMediaObj;
+        const movieId = template.TMDBid;
+
+        if (!arrMediaObj[0]) arrMediaObj.push(template);
+        else {
+          for (let i = 0; i < arrMediaObj.length; i += 1) {
+            if (arrMediaObj[i].TMDBid === movieId) resolve(false);
+          }
+          arrMediaObj.push(template);
+        }
+        resolve(arrMediaObj);
+      })
+      .catch((err) => reject(err));
+  })
+);
+
+// Helper function for updating status of the current movie for the individual user
+const updateStatus = (username, TMDBid, status) => (
+  new Promise((resolve, reject) => {
+    User.findOne({ username: username }, { arrMediaObj: 1 })
+      .then((data) => {
+        const arrMediaObj = data.arrMediaObj;
+        const type = status[0];
+        const currStatus = status[1];
+
+        for (let i = 0; i < arrMediaObj.length; i += 1) {
+          if (arrMediaObj[i].TMDBid === TMDBid) {
+            const updatedMediaArr = arrMediaObj[i];
+            updatedMediaArr[type] = !currStatus;
+            resolve(updatedMediaArr);
+          }
+        }
+      })
+      .catch((err) => reject(err));
+  })
+);
+
 
 const userController = {
-  // createUser - Add username, Add arrMediaObj as an empty array (POST)
-  async createUser(req, res, next) {
-    try {
-      const result = await UserDb.create({ username: req.body.username });
-      res.locals.createUser = result;
-      return next();
-    } catch (err) {
-      return next({
-        log: `createUser controller had an error. ${err}`,
+  // req body should be the following { username: "David", password: "hashedPassword"}
+  createUser(req, res, next) {
+    User.find({ username: req.body.username })
+      .then((data) => {
+        if (!data[0]) {
+          User.create({ username: req.body.username, password: req.body.password })
+            .then((data) => {
+              console.log('username has been successfully created');
+              res.locals.createUser = data;
+              return next();
+            })
+            .catch((err) => next({
+              log: 'An error has occured with the create user middleware',
+              status: 401,
+              message: { err: `${err} An error has occured with the create user middleware` },
+            }));
+        } else {
+          res.locals.createUser = 'username has already been used';
+          return next();
+        }
+      })
+      .catch((err) => next({
+        log: 'An error has occured with the find user middleware',
         status: 401,
-        message: { err: 'An error occurred when creating a new user' },
-      });
-    }
+        message: { err: `${err} An error has occured with the find user middleware` },
+      }));
   },
 
+  // returns the whole object for the user found in the DB
   async getUser(req, res, next) {
     try {
-      const result = await UserDb.findOne({ username: req.params.username });
-      res.locals.user = result;
+      const result = await User.find({ username: req.params.username });
+      res.locals.user = result[0];
       return next();
     } catch (err) {
       return next({
@@ -30,10 +88,30 @@ const userController = {
     }
   },
 
+  async verifyUser(req, res, next) {
+    try {
+      const result = await User.find({ username: req.params.username });
+      // console.log(result);
+      const user = result[0];
+      // console.log(user);
+      const validPassword = await user.comparePassword(req.body.password);
+      if (validPassword) console.log('valid password!');
+      else console.log('password declined');
+      res.locals.user = result[0];
+      return next();
+    } catch (err) {
+      return next({
+        log: `verifyUser controller had an error. ${err}`,
+        status: 401,
+        message: { err: 'An error occurred when verifying a user' },
+      });
+    }
+  },
+
   // removeUser - Delete User; based on username or maybe MongoID; TBD (DELETE)
   async deleteUser(req, res, next) {
     try {
-      const result = await UserDb.findOneAndDelete({
+      const result = await User.findOneAndDelete({
         username: req.params.username,
       });
       res.locals.deleteUser = result;
@@ -46,85 +124,65 @@ const userController = {
       });
     }
   },
-  // addMedia - Add an object to User's .arrMediaObj | PUT .findOneAndUpdate()
-  /*
-  {
-    TMDBId: 12
-    haveSeen: false
-    toWatch: true
-    fav: true
-  }
-    */
-  async addMedia(req, res, next) {
-    //req.body is { TMDBid: 70, fav: true }
-    try {
-      const template = {
-        TMDBid: req.body.TMDBid,
-        haveSeen: false,
-        toWatch: false,
-        fav: false,
-      };
-      template[Object.keys(req.body)[1]] = true;
 
-      const result = await UserDb.updateOne(
-        { username: req.params.username },
-        { $push: { arrMediaObj: template } }
-      );
-      res.locals.addedMedia = result;
-      return next();
-    } catch (err) {
-      next({
-        log: `addMedia controller had an error. ${err}`,
-        status: 401,
-        message: { err: 'An error occurred when adding media object' },
+  // req body should probably be {username: "David", TMDBid: 70}
+  addMedia(req, res, next) {
+    const username = req.body.username;
+    // make sure how front end is sending the TMDBid as number or string (CURRENTLY a string)
+    const template = {
+      TMDBid: req.body.TMDBid,
+      haveSeen: false,
+      toWatch: false,
+      fav: true,
+    };
+
+    checkDuplicate(username, template)
+      .then((data) => {
+        if (data) {
+          User.updateOne({ username: username }, { $set: { arrMediaObj: data } })
+            .then(() => console.log('Movie has been added'))
+            .catch((err) => next(err));
+          res.locals.addedMedia = data;
+          return next();
+        }
+        return next({
+          log: 'A movie already exist',
+          status: 401,
+          message: { err: 'Movie already exist' },
+        });
+      })
+      .catch((err) => {
+        next({
+          log: 'An error has occured with the add Media middleware',
+          status: 401,
+          message: { err: `${err} An error has occured with the add Media middleware` },
+        });
       });
-    }
   },
 
-  // UPDATE MEDIA (PUT)
-  async updateMedia(req, res, next) {
-    // { TMDBid: 70, fav: true }
-    try {
-      let result;
+  // req body should be { username: 'David', TMDBid: '218', fav||watchlist||watch: current status}
+  // status should be an array [fav, true] || [haveSeen, true] || [toWatch, true]
+  updateMedia(req, res, next) {
+    const username = req.body.username;
+    const TMDBid = req.body.TMDBid;
+    const status = req.body.status;
 
-      if (req.body.hasOwnProperty('fav')) {
-        result = await UserDb.updateOne(
-          {
-            username: req.params.username,
-            arrMediaObj: { $elemMatch: { TMDBid: { $eq: req.body.TMDBid } } },
-          },
-
-          { $set: { 'arrMediaObj.$.fav': req.body.fav } }
-        );
-      } else if (req.body.hasOwnProperty('toWatch')) {
-        result = await UserDb.updateOne(
-          {
-            username: req.params.username,
-            arrMediaObj: { $elemMatch: { TMDBid: { $eq: req.body.TMDBid } } },
-          },
-
-          { $set: { 'arrMediaObj.$.toWatch': req.body.toWatch } }
-        );
-      } else if (req.body.hasOwnProperty('haveSeen')) {
-        result = await UserDb.updateOne(
-          {
-            username: req.params.username,
-            arrMediaObj: { $elemMatch: { TMDBid: { $eq: req.body.TMDBid } } },
-          },
-
-          { $set: { 'arrMediaObj.$.haveSeen': req.body.haveSeen } }
-        );
-      }
-      res.locals.updatedMedia = result;
-      return next();
-    } catch (err) {
-      next({
-        log: `updateMedia controller had an error. ${err}`,
+    updateStatus(username, TMDBid, status)
+      .then((data) => {
+        console.log(data)
+        User.updateOne( {username: username}, { $set: {arrMediaObj: data} })
+          .then(() => console.log('Media status has been updated'))
+          .catch((err) => console.log(err));
+        res.locals.updatedMedia = data;
+        return next();
+      })
+      .catch((err) => next({
+        log: 'An error has occured with the update Media middleware',
         status: 401,
-        message: { err: 'An error occurred when updating media' },
-      });
-    }
+        message: { err: `${err} An error has occured with the update Media middleware` },
+      }));
   },
+
 };
 
 module.exports = userController;
