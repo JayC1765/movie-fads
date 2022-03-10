@@ -20,7 +20,7 @@ app.post('/user', userController.createUser, (req, res) => {
 });
 
 //add GET USER endpoint
-app.get('/:username', userController.verifyUser, (req, res) => {
+app.get('/:username', userController.getUser, (req, res) => {
   return res.status(200).json(res.locals.user);
 });
 

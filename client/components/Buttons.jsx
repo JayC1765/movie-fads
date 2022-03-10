@@ -7,14 +7,14 @@ function Buttons(props) {
   const buttons = [];
   if (button1) {
     buttons.push(
-      <button type="button" onClick={console.log('')}>
-        {button1}
-      </button>,
+      <button type="button" onClick={() => console.log('clicked button 1')}>
+        {props.button1}
+      </button>
     );
   }
   if (button2) {
     buttons.push(
-      <button type="button" onClick={console.log('')}>
+      <button type="button" onClick={() => console.log('clicked button 2')}>
         {' '}
         {button2}
       </button>,
@@ -22,7 +22,7 @@ function Buttons(props) {
   }
   if (button3) {
     buttons.push(
-      <button type="button" onClick={console.log('')}>
+      <button type="button" onClick={() => console.log('clicked button 3')}>
         {' '}
         {button3}
       </button>,

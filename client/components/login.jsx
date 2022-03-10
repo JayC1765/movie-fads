@@ -1,9 +1,11 @@
 import React from 'react';
 
 function Login(props) {
+  const { buttonText, formMethod, formAction } = props;
+
   return (
     <div>
-      <form method="post" action="user">
+      <form method={formMethod} action={formAction}>
         <label htmlFor="username">
           Username:
           <input id="username" type="text" name="username" required placeholder="Please enter username..." />
@@ -13,7 +15,7 @@ function Login(props) {
           <input id="password" type="password" name="password" required placeholder="Please enter password.." />
         </label>
         <div>
-          <input type="submit" value="Sign Up" />
+          <input type="submit" value={buttonText} />
         </div>
       </form>
     </div>
