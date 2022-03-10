@@ -27,17 +27,17 @@ const updateStatus = (username, TMDBid, status) => (
   new Promise((resolve, reject) => {
     User.findOne({ username: username }, { arrMediaObj: 1 })
       .then((data) => {
+        console.log(data);
         const arrMediaObj = data.arrMediaObj;
-        const type = status[0];
-        const currStatus = status[1];
+        const type = status;
+        // const currStatus = status[1];
 
         for (let i = 0; i < arrMediaObj.length; i += 1) {
           if (arrMediaObj[i].TMDBid === TMDBid) {
-            const updatedMediaArr = arrMediaObj[i];
-            updatedMediaArr[type] = !currStatus;
-            resolve(updatedMediaArr);
+            arrMediaObj[i][type] = !arrMediaObj[i][type];
           }
         }
+        resolve(arrMediaObj);
       })
       .catch((err) => reject(err));
   })
@@ -141,8 +141,8 @@ const userController = {
     // make sure how front end is sending the TMDBid as number or string (CURRENTLY a string)
     const template = {
       TMDBid: req.body.TMDBid,
-      haveSeen: false,
-      toWatch: false,
+      haveSeen: true,
+      toWatch: true,
       fav: true,
     };
 
@@ -183,7 +183,6 @@ const userController = {
         User.updateOne( {username: username}, { $set: {arrMediaObj: data} })
           .then(() => console.log('Media status has been updated'))
           .catch((err) => console.log(err));
-        res.locals.updatedMedia = data;
         return next();
       })
       .catch((err) => next({

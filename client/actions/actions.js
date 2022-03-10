@@ -50,4 +50,19 @@ const fetchUserMovieList = (username) => (dispatch) => {
     });
 };
 
+export const toggleFav = (tmdbid) => ({
+  type: types.TOGGLE_FAV,
+  payload: tmdbid,
+});
+
+export const toggleToWatch = (tmdbid) => ({
+  type: types.TOGGLE_TOWATCH,
+  payload: tmdbid,
+});
+
+export const toggleHaveSeen = (tmdbid) => ({
+  type: types.TOGGLE_HAVESEEN,
+  payload: tmdbid,
+});
+
 export default fetchUserMovieList;

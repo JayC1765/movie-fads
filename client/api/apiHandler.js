@@ -31,8 +31,9 @@ apiHandler.searchApi = (query) => (
   })
 );
 
-apiHandler.locatePoster = (filmId, configObj) => (
-  new Promise((resolve, reject) => {
+apiHandler.locatePoster = (filmId, configObj) => {
+  console.log(filmId);
+  return new Promise((resolve, reject) => {
     const imageBase = configObj.images.base_url;
     const size = configObj.images.poster_sizes[0];
     if (!localStorage.getItem(filmId)) {
@@ -57,6 +58,6 @@ apiHandler.locatePoster = (filmId, configObj) => (
       });
     }
   })
-);
+};
 
 export default apiHandler;
