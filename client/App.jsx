@@ -1,9 +1,11 @@
 import React from 'react';
-import MainContainer from './containers/MainContainer.jsx';
+import Login from './components/Login.jsx';
+import MainContainer from './containers/MainContainer';
 
 const App = () => {
   return(
    <div id = 'app'> 
+    <Login />
     <MainContainer />
    </div>
   );

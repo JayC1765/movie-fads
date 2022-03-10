@@ -43,7 +43,6 @@ const updateStatus = (username, TMDBid, status) => (
   })
 );
 
-
 const userController = {
   // req body should be the following { username: "David", password: "hashedPassword"}
   createUser(req, res, next) {
@@ -91,12 +90,15 @@ const userController = {
   async verifyUser(req, res, next) {
     try {
       const result = await User.find({ username: req.params.username });
+      // ********************************************************************************
+      // The code in here is different from getUser. All the other code in this function is the same as getUser.
       // console.log(result);
       const user = result[0];
       // console.log(user);
       const validPassword = await user.comparePassword(req.body.password);
       if (validPassword) console.log('valid password!');
       else console.log('password declined');
+      // ********************************************************************************
       res.locals.user = result[0];
       return next();
     } catch (err) {

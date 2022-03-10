@@ -44,4 +44,7 @@ module.exports = {
         hot: true,
         proxy: {'/': 'http://localhost:3000'}
      },
+     resolve: {
+         extensions: ['.js', '.jsx'],
+     },
 };

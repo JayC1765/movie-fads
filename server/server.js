@@ -16,7 +16,7 @@ app.use(express.static(path.join(__dirname, '../build')));
 // ROUTE HANDLERS
 // add POST USER endpoint to add new user to database
 app.post('/user', userController.createUser, (req, res) => {
-  return res.status(200).json(res.locals.createUser);
+  return res.status(200).redirect('/');
 });
 
 //add GET USER endpoint
