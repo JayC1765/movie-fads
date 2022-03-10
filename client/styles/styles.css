@@ -8,10 +8,7 @@
 
 body {
   font-family: 'M PLUS 1p', sans-serif;
-}
-
-.main-container {
-  background-color: rgba(56, 121, 67, 0.185);
+  background-color: rgb(197, 236, 249);
 }
 
 .main-container h1 {
@@ -116,4 +113,13 @@ button:hover {
 
 .movie-pic {
   cursor: pointer;
+}
+
+.clickable {
+  text-decoration: underline;
+}
+
+.clickable:hover {
+  cursor: pointer;
+  color: blue;
 }

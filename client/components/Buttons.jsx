@@ -16,6 +16,7 @@ function Buttons(props) {
   if (button1) {
     buttons.push(
       <button
+        key={`button1${props.tmdbId}`}
         type="button"
         onClick={() => {
           console.log(userMovieArray);
@@ -23,7 +24,7 @@ function Buttons(props) {
           fetch('/updateMedia', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username: 'David', TMDBid: `${props.tmdbId}`, status: 'toWatch' }),
+            body: JSON.stringify({ username: currentUserID, TMDBid: `${props.tmdbId}`, status: 'toWatch' }),
           })
             .then(() => dispatch(toggleToWatch(props.tmdbId)))
             .catch((e) => console.error(e));
@@ -36,6 +37,7 @@ function Buttons(props) {
   if (button2) {
     buttons.push(
       <button
+      key={`button2${props.tmdbId}`}
         type="button"
         onClick={() => {
           console.log(userMovieArray);
@@ -43,7 +45,7 @@ function Buttons(props) {
           fetch('/updateMedia', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username: 'David', TMDBid: `${props.tmdbId}`, status: 'fav' }),
+            body: JSON.stringify({ username: currentUserID, TMDBid: `${props.tmdbId}`, status: 'fav' }),
           })
             .then(() => dispatch(toggleFav(props.tmdbId)))
             .catch((e) => console.error(e));
@@ -56,6 +58,7 @@ function Buttons(props) {
   if (button3) {
     buttons.push(
       <button
+      key={`button3${props.tmdbId}`}
         type="button"
         onClick={() => {
           console.log(userMovieArray);
@@ -63,7 +66,7 @@ function Buttons(props) {
           fetch('/updateMedia', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username: 'David', TMDBid: `${props.tmdbId}`, status: 'haveSeen' }),
+            body: JSON.stringify({ username: currentUserID, TMDBid: `${props.tmdbId}`, status: 'haveSeen' }),
           })
             .then(() => dispatch(toggleHaveSeen(props.tmdbId)))
             .catch((e) => console.error(e));

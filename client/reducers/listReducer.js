@@ -10,18 +10,21 @@ const initialState = {
 
 const listReducer = (state = initialState, action = {}) => {
   let userMovieArray = [...state.userMovieArray];
+  let currentUserID;
   switch (action.type) {
     case types.FETCH_USER_MOVIE_LIST_SUCCESS: {
+      currentUserID = action.payload.pop();
       userMovieArray = action.payload;
       return {
         ...state,
         userMovieArray,
+        currentUserID,
       };
     }
     case types.TOGGLE_FAV: {
       for (let i = 0; i < userMovieArray.length; i += 1) {
-        if (userMovieArray[i] && userMovieArray[i].TMDBid == action.payload) {
-          userMovieArray[i].fav = !userMovieArray[i].fav
+        if (userMovieArray[i] && userMovieArray[i].TMDBid === action.payload) {
+          userMovieArray[i].fav = !userMovieArray[i].fav;
         }
       }
       return {
@@ -31,7 +34,7 @@ const listReducer = (state = initialState, action = {}) => {
     }
     case types.TOGGLE_HAVESEEN: {
       for (let i = 0; i < userMovieArray.length; i += 1) {
-        if (userMovieArray[i] && userMovieArray[i].TMDBid == action.payload) {
+        if (userMovieArray[i] && userMovieArray[i].TMDBid === action.payload) {
           userMovieArray[i].haveSeen = !userMovieArray[i].haveSeen;
         }
       }
@@ -43,7 +46,7 @@ const listReducer = (state = initialState, action = {}) => {
 
     case types.TOGGLE_TOWATCH: {
       for (let i = 0; i < userMovieArray.length; i += 1) {
-        if (userMovieArray[i] && userMovieArray[i].TMDBid == action.payload) {
+        if (userMovieArray[i] && userMovieArray[i].TMDBid === action.payload) {
           userMovieArray[i].toWatch = !userMovieArray[i].toWatch;
         }
       }
