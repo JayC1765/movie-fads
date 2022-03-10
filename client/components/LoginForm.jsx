@@ -1,12 +1,13 @@
 import React from 'react';
 
 function Login(props) {
+  // eslint-disable-next-line object-curly-newline
   const { buttonText, formMethod, formAction, handleSubmit } = props;
 
   return (
     <div>
-      <form method={formMethod} action={formAction}> 
-      {/* DON'T NEED forMethod and formAction anymore */}
+      <form method={formMethod} action={formAction}>
+        {/* DON'T NEED forMethod and formAction anymore */}
         <label htmlFor="username">
           Username:
           <input id="username" type="text" name="username" required placeholder="Please enter username..." />
