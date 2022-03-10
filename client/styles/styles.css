@@ -117,3 +117,12 @@ button:hover {
 .movie-pic {
   cursor: pointer;
 }
+
+.clickable {
+  text-decoration: underline;
+}
+
+.clickable:hover {
+  cursor: pointer;
+  color: blue;
+}

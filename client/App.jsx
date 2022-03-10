@@ -7,7 +7,7 @@ function App() {
 
   // useEffect(() => setLogin(true));
 
-  const handleSubmit = (event) => {
+  const handleSignup = (event) => {
     event.preventDefault();
     const username = document.querySelector('#username').value;
     const regex = /^[^<>'\"/;`%]*$ | /;
@@ -16,9 +16,6 @@ function App() {
       return;
     }
     const password = document.querySelector('#password').value;
-
-    // let method;
-    // if (page === 'sign up') method = 'POST';
 
     fetch('/user', {
       method: 'POST',
@@ -39,10 +36,6 @@ function App() {
     event.preventDefault();
     const username = document.querySelector('#username').value;
     const password = document.querySelector('#password').value;
-    
-
-    // let method;
-    // if (page === 'sign up') method = 'POST';
 
     fetch(`/${username}/${password}`, {
       method: 'POST',
@@ -57,15 +50,25 @@ function App() {
       });
   };
 
+  const toggleForm = (event) => {
+    if (page === 'sign up') setPage('log in');
+    else setPage('sign up');
+  }
+
   let content;
   if (page === 'sign up') {
     content = (
-      <Login
-        buttonText="Sign Up"
-        formMethod="post"
-        formAction="user"
-        handleSubmit={handleSubmit}
-      />
+      <div>
+        <Login
+          buttonText="Sign Up"
+          formMethod="post"
+          formAction="user"
+          handleSubmit={handleSignup}
+          promptText="Already have an account? "
+          linkText="Log in"
+          toggleForm={toggleForm}
+        />
+      </div>
     );
   } else if (page === 'log in') {
     content = (
@@ -74,6 +77,9 @@ function App() {
         formMethod="post"
         formAction="some-route"
         handleSubmit={handleLogin}
+        promptText="Do you want to sign up? "
+        linkText="Sign up"
+        toggleForm={toggleForm}
       />
     );
   } else if (page === 'homepage') {

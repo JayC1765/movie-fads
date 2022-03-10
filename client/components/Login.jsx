@@ -2,7 +2,15 @@ import React from 'react';
 
 function Login(props) {
   // eslint-disable-next-line object-curly-newline
-  const { buttonText, formMethod, formAction, handleSubmit } = props;
+  const {
+    buttonText,
+    formMethod,
+    formAction,
+    handleSubmit,
+    promptText,
+    linkText,
+    toggleForm,
+  } = props;
 
   return (
     <div>
@@ -19,6 +27,10 @@ function Login(props) {
         <div>
           <input type="submit" value={buttonText} onClick={handleSubmit} />
         </div>
+        <p>
+          {promptText}
+          <span className="clickable" onClick={toggleForm}>{linkText}</span>
+        </p>
       </form>
     </div>
   );
