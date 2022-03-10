@@ -7,14 +7,18 @@ function App() {
 
   // useEffect(() => setLogin(true));
 
-
   const handleSubmit = (event) => {
-    const username = document.querySelector('#username').value;
-    const password = document.querySelector('#password').value;
     event.preventDefault();
-  
-    let method;
-    if (page === 'sign up') method = 'POST';
+    const username = document.querySelector('#username').value;
+    const regex = /^[^<>'\"/;`%]*$ | /;
+    if (username.match(regex)) {
+      console.log(`Username may not include spaces or any of the following characters: ^[^<>'\\"/;\`%]*$`);
+      return;
+    }
+    const password = document.querySelector('#password').value;
+
+    // let method;
+    // if (page === 'sign up') method = 'POST';
 
     fetch('/user', {
       method: 'POST',
@@ -29,7 +33,29 @@ function App() {
           setPage('log in');
         }
       });
-  }
+  };
+
+  const handleLogin = (event) => {
+    event.preventDefault();
+    const username = document.querySelector('#username').value;
+    const password = document.querySelector('#password').value;
+    
+
+    // let method;
+    // if (page === 'sign up') method = 'POST';
+
+    fetch(`/${username}/${password}`, {
+      method: 'POST',
+    })
+      .then((result) => result.json())
+      .then((response) => {
+        if (response.result === 'success') {
+          setPage('homepage');
+        } else {
+          setPage('log in');
+        }
+      });
+  };
 
   let content;
   if (page === 'sign up') {
@@ -45,9 +71,9 @@ function App() {
     content = (
       <Login
         buttonText="Log In"
-        formMethod="get"
+        formMethod="post"
         formAction="some-route"
-        handleSubmit={handleSubmit}
+        handleSubmit={handleLogin}
       />
     );
   } else if (page === 'homepage') {

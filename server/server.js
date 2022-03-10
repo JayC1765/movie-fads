@@ -19,9 +19,9 @@ app.post('/user', userController.createUser, (req, res) => {
   return res.status(200).json({ result: 'success' });
 });
 
-//add GET USER endpoint
-app.get('/:username', userController.getUser, (req, res) => {
-  return res.status(200).json(res.locals.user);
+//add POST USER endpoint
+app.post('/:username/:password', userController.verifyUser, (req, res) => {
+  return res.status(200).json({ result: 'success', user: res.locals.user });
 });
 
 //remote DELETE USER endpoint
