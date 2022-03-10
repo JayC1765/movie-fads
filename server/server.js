@@ -35,11 +35,11 @@ app.put('/addMedia', userController.addMedia, (req, res) => {
 });
 
 app.put('/updateMedia', userController.updateMedia, (req, res) => {
-  return res.status(200).json(res.locals.updatedMedia)
+  return res.sendStatus(200)
 });
 
 // Unknown route handler
-app.get('*', (req, res) => res.status(404).send('Page not Found'));
+app.use('*', (req, res) => res.status(404).send('Page not Found'));
 
 // Global error handler
 app.use((err, req, res, next) => {

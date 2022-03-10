@@ -13,7 +13,7 @@ function MediaCard(props) {
         <Poster posterPath={props.posterPath} originalTitle={props.originalTitle} key={`poster ${props.key}`} tmdbId={props.tmdbId} />
       </div>
       <div className="buttons">
-        <Buttons />
+        <Buttons fav={props.fav} toWatch={props.toWatch} haveSeen={props.haveSeen} key={`buttons${props.key}`} tmdbId={props.tmdbId} />
       </div>
     </div>
   );
