@@ -13,7 +13,7 @@ function Login(props) {
   } = props;
 
   return (
-    <div>
+    <div id="form-wrapper">
       <form method={formMethod} action={formAction}>
         {/* DON'T NEED forMethod and formAction anymore */}
         <label htmlFor="username">

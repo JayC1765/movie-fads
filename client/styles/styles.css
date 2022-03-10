@@ -6,9 +6,30 @@
   font-family: 'M PLUS 1p', sans-serif;
 }
 
+* { 
+  box-sizing: border-box;
+}
+
 body {
   font-family: 'M PLUS 1p', sans-serif;
   background-color: rgb(197, 236, 249);
+  margin: 0;
+}
+
+#app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+#title {
+  text-align: center;
+}
+
+#ghost-title {
+  text-align: center;
+  opacity: 0;
 }
 
 .main-container h1 {
