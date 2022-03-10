@@ -30,21 +30,24 @@ const fetchUserMovieList = (username) => (dispatch) => {
                     resolve(joinData);
                   })
                   .catch((e) => {
-                    const joinData = {
-                      poster_path: '',
-                      original_title: '',
-                      ...userObj.arrMediaObj[i],
-                    };
-                    reject(joinData);
+                    reject(e);
                   });
               }),
             );
           }
           return Promise.allSettled(result);
         })
+        .catch((e) => e)
     ))
     .then((res) => dispatch(fetchUserMovieListSuccess(res.map((ele) => ele.value))))
-    .catch((err) => dispatch(fetchUserMovieListFailure(err)));
+    .catch((err) => {
+      if (!sessionStorage.getItem('refreshed')) {
+        localStorage.clear();
+        sessionStorage.setItem('refreshed', 'true');
+        return fetchUserMovieList(username);
+      }
+      return dispatch(fetchUserMovieListFailure(err));
+    });
 };
 
 export default fetchUserMovieList;
