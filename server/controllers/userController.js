@@ -88,6 +88,26 @@ const userController = {
     }
   },
 
+  async verifyUser(req, res, next) {
+    try {
+      const result = await User.find({ username: req.params.username });
+      // console.log(result);
+      const user = result[0];
+      // console.log(user);
+      const validPassword = await user.comparePassword(req.body.password);
+      if (validPassword) console.log('valid password!');
+      else console.log('password declined');
+      res.locals.user = result[0];
+      return next();
+    } catch (err) {
+      return next({
+        log: `verifyUser controller had an error. ${err}`,
+        status: 401,
+        message: { err: 'An error occurred when verifying a user' },
+      });
+    }
+  },
+
   // removeUser - Delete User; based on username or maybe MongoID; TBD (DELETE)
   async deleteUser(req, res, next) {
     try {
